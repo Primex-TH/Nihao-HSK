@@ -6,12 +6,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>HSK1-6 Ultimate Learning System</title>
-  <link rel="apple-touch-icon" href="logo.png?v=3">
-  <link rel="icon" type="image/png" href="logo.png?v=3">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Nihao HSK">
-  <meta name="theme-color" content="#2b2d42">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&family=Noto+Sans+SC:wght@500;700&display=swap">
   <style>
     :root {
@@ -388,6 +382,17 @@ nav#navTabs{border:0!important;box-shadow:0 -10px 24px -8px var(--sh)!important;
 nav#navTabs::after{content:"";position:absolute;left:0;right:0;top:100%;height:80px;background:var(--menu);pointer-events:none}
 html{min-height:100%}body{min-height:100vh;min-height:100dvh}
 </style>
+<style id="theme11">
+html.kb nav#navTabs{display:none!important}
+html.kb .container{padding-bottom:24px!important}
+.mp-sel{width:100%;margin-top:6px;padding:8px;border-radius:10px;font-size:.85rem!important}.mp-hint{font-size:.72rem;color:var(--muted);margin-top:4px;line-height:1.35}
+.opts.one{grid-template-columns:1fr}.opt.long{font-family:inherit;font-size:.92rem;text-align:left;line-height:1.4}
+.ordans{min-height:52px;display:flex;flex-wrap:wrap;gap:8px;padding:10px;border-radius:14px;background:var(--inner);border:1px dashed var(--line);margin:10px 0}
+.ordpool{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.tok{border:1px solid var(--edge);background:linear-gradient(145deg,var(--glass2),var(--glass));color:var(--ink);border-radius:12px;padding:8px 12px;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:1.2rem;font-weight:500;box-shadow:0 3px 8px var(--sh)}
+.tok.in{background:linear-gradient(180deg,var(--pri2),var(--pri-d));color:#fff}
+.ltop{grid-template-columns:96px 1fr 38px 38px!important}
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -419,12 +424,16 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
     <div class="seg"><button id="lgTh" class="nt" onclick="setLang('th')">ไทย</button><button id="lgEn" class="nt" onclick="setLang('en')">English</button></div>
     <div class="mp-l">ขนาดตัวอักษร</div>
     <div class="seg"><button data-fs="s" onclick="setFs('s')">เล็ก</button><button data-fs="m" onclick="setFs('m')">กลาง</button><button data-fs="l" onclick="setFs('l')">ใหญ่</button></div>
+    <div class="mp-l">เสียงอ่าน</div>
+    <div class="seg" id="ttsRate"><button data-r="s">ช้า</button><button data-r="n">ปกติ</button><button data-r="f">เร็ว</button></div>
+    <select id="ttsVoice" class="mp-sel"></select>
+    <div class="mp-hint">ถ้าเสียงยังห้วน ให้ดาวน์โหลดเสียงจีนคุณภาพสูงในตั้งค่าของเครื่อง</div>
     <div class="mp-l">โหมดสี</div>
     <div class="seg"><button id="thL" onclick="setTheme('light')">สว่าง</button><button id="thD" onclick="setTheme('dark')">มืด</button></div>
     <div class="mp-l">สำรองข้อมูล</div>
     <div class="seg"><button onclick="backupCode()">📋 คัดลอกรหัส</button><button onclick="restoreCode()">📥 กู้คืน</button></div>
     <div class="mp-l">เกี่ยวกับแอป</div>
-    <div class="mp-a">Nihao HSK · เวอร์ชัน 1.5<br>คำศัพท์ HSK 1–6 รวม 651 คำ<br>ข้อมูลเก็บไว้ในเครื่องของคุณเท่านั้น</div>
+    <div class="mp-a">Nihao HSK · เวอร์ชัน 1.6<br>คำศัพท์ HSK 1–6 รวม 651 คำ<br>ข้อมูลเก็บไว้ในเครื่องของคุณเท่านั้น</div>
   </div>
   
   <header class="hero">
@@ -498,7 +507,9 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
 
     <div style="text-align:center;">
       <button class="btn btn-secondary" onclick="speakText(document.getElementById('vocabHanzi').innerText)">🔊 ฟังออกเสียงคำศัพท์</button>
+      <button class="btn btn-secondary" onclick="speakSlow(document.getElementById('vocabHanzi').innerText)">🐢 ช้าๆ</button>
       <button class="btn btn-secondary" onclick="speakText(document.getElementById('vocabExZh').innerText)">🔊 ฟังเสียงประโยค</button>
+      <button class="btn btn-secondary" onclick="speakSlow(document.getElementById('vocabExZh').innerText)">🐢 ช้าๆ</button>
       <br><br>
       <div style="text-align:center;margin:10px 0"><button id="revealBtn" class="pbtn" style="display:none" onclick="reveal()">👁️ เฉลย</button></div>
     <p>ประเมินระดับความจำ (SRS Rating):</p>
@@ -528,6 +539,7 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
 
     <div style="text-align: center;">
       <button class="btn btn-secondary" onclick="speakText(document.getElementById('shadowText').innerText)">🔊 ฟังเสียงต้นแบบ</button>
+      <button class="btn btn-secondary" onclick="speakSlow(document.getElementById('shadowText').innerText)">🐢 ช้าๆ</button>
       <button class="btn btn-success" onclick="startSpeechRecognition()">🎙️ เริ่มพูดบันทึกเสียง</button>
       <button class="btn" id="shNext" onclick="nextSentence()">➡️ ประโยคถัดไป</button>
       <button class="btn" id="shShuf" onclick="shufShadow()">🔀 สุ่ม</button>
@@ -544,13 +556,17 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
     <button class="btn" onclick="checkGrammarWithAI()">✅ ตรวจประโยค</button>
     
     <div id="aiOutput" class="output-box">ผลการวิเคราะห์ไวยากรณ์จะปรากฏที่นี่...</div>
+    <h3 class="sec">แบบฝึก</h3>
+    <div class="card2"><label for="exLv"><b>ระดับของแบบฝึก</b></label><br>
+      <select id="exLv"><option value="0">ทุกระดับที่ปลดล็อก</option><option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option></select></div>
     <h3 class="sec">แบบฝึกเติมคำในช่องว่าง</h3>
-    <div class="card2"><small class="muted">เลือกคำที่เติมลงในช่องว่าง</small>
+    <div class="card2"><small class="muted" id="fillLbl">เลือกคำที่เติมลงในช่องว่าง</small>
       <div id="fillQ" class="fillq"></div><div id="fillHint" class="muted nt" style="font-size:.88rem"></div>
-      <div id="fillOpts" class="opts"></div><div id="fillFb" style="min-height:1.4em;margin:6px 0;font-weight:600;white-space:pre-line"></div>
+      <div id="fillOpts" class="opts"></div><div id="ordWrap" style="display:none"><div id="ordAns" class="ordans"></div><div id="ordPool" class="ordpool"></div><button class="pbtn ghost" onclick="ordReset()">↺ ล้าง</button> <button class="pbtn" onclick="ordCheck()">✅ ตรวจคำตอบ</button></div>
+      <div id="fillFb" style="min-height:1.4em;margin:6px 0;font-weight:600;white-space:pre-line"></div>
       <button class="pbtn" onclick="newFill()">➡️ ข้อถัดไป</button></div>
     <h3 class="sec">โจทย์ท้าแต่งประโยค</h3>
-    <div class="card2"><small class="muted">แต่งประโยคโดยใช้คำว่า</small>
+    <div class="card2"><small class="muted" id="taskLbl">แต่งประโยคโดยใช้คำว่า</small>
       <div id="taskW" class="taskw nt"></div>
       <input type="text" id="taskIn" placeholder="พิมพ์ประโยคของคุณ...">
       <button class="pbtn" onclick="checkTask()">✅ ตรวจโจทย์</button> <button class="pbtn ghost" onclick="newTask()">🔄 โจทย์ใหม่</button>
@@ -1240,7 +1256,7 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
   const ls = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} };
   const EXACT = {'หน้าหลัก':'Home','ทบทวน':'Review','พูดตาม':'Speak','ไวยากรณ์':'Grammar','สอบ':'Exam','ระดับ':'Level','ผู้เรียน':'Learner','จำได้แล้ว':'Learned',
     '⭐ XP รวม':'⭐ Total XP','📖 คำที่จำได้':'📖 Words learned','🏅 ชุดสอบที่ผ่าน':'🏅 Sets passed','เมนู':'Menu','ขนาดตัวอักษร':'Text size','เล็ก':'Small','กลาง':'Medium','ใหญ่':'Large',
-    'เกี่ยวกับแอป':'About','เวอร์ชัน':'Version','ข้อผิดพลาดที่พบบ่อย':'Common mistakes','ประโยคที่ตรวจล่าสุด':'Recent sentences','ผิด':'Wrong','ถูก':'Right','ประโยค':'Sentences','คำ':'Words','โหมดสี':'Appearance','สว่าง':'Light','มืด':'Dark','XP รวม':'Total XP','คำที่จำได้':'Words learned','ชุดสอบที่ผ่าน':'Sets passed'};
+    'เกี่ยวกับแอป':'About','เวอร์ชัน':'Version','ข้อผิดพลาดที่พบบ่อย':'Common mistakes','ประโยคที่ตรวจล่าสุด':'Recent sentences','ผิด':'Wrong','ถูก':'Right','ประโยค':'Sentences','คำ':'Words','โหมดสี':'Appearance','สว่าง':'Light','มืด':'Dark','ช้า':'Slow','ปกติ':'Normal','เร็ว':'Fast','XP รวม':'Total XP','คำที่จำได้':'Words learned','ชุดสอบที่ผ่าน':'Sets passed'};
   const RX = [[/จำได้แล้ว (\d+)\/(\d+) คำ/g,'Learned $1/$2 words'],[/ข้อ (\d+):/g,'Q$1:'],[/(\d)\/3 ชุด/g,'$1/3 sets'],[/คะแนน: /g,'Score: '],[/ชุดที่ /g,'Set '],[/ทั้งหมด (\d+) คำ/g,'$1 words'],[/เหลือ (\d+) คำ/g,'$1 left'],[/🔥 (\d+) วัน/g,'🔥 $1 days']];
   const P = [
    ['ระดับที่กำลังเรียน','Current level'],['เส้นทาง HSK 1–6','HSK 1–6 path'],['ชื่อผู้เรียน','Learner name'],['พิมพ์ชื่อของคุณที่นี่...','Type your name here...'],['บันทึกชื่อ','Save name'],
@@ -1281,6 +1297,10 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
    ['สำรองข้อมูล','Backup'],['📋 คัดลอกรหัส','📋 Copy code'],['📥 กู้คืน','📥 Restore'],['คัดลอกรหัสสำรองแล้ว วางเก็บไว้ในโน้ตหรือส่งให้ตัวเองได้','Backup code copied. Paste it into a note or send it to yourself.'],
    ['คัดลอกรหัสนี้เก็บไว้','Copy this code and keep it'],['วางรหัสสำรองที่นี่','Paste your backup code here'],['รหัสไม่ถูกต้อง','Invalid code'],['กู้คืนเรียบร้อย','Restored successfully'],
    ['คลังคำศัพท์','Word library'],['เลือกระดับ HSK:','Choose HSK level:'],['แตะที่คำเพื่อดูประโยคตัวอย่าง','Tap a word to see an example sentence'],
+   ['เสียงอ่าน','Voice'],['อัตโนมัติ (เสียงที่ดีที่สุด)','Auto (best voice)'],['ไม่พบเสียงภาษาจีนในเครื่อง','No Chinese voice found on this device'],['ถ้าเสียงยังห้วน ให้ดาวน์โหลดเสียงจีนคุณภาพสูงในตั้งค่าของเครื่อง','If it still sounds choppy, download a high-quality Chinese voice in your device settings'],
+   ['🐢 ช้าๆ','🐢 Slow'],['แบบฝึก','Exercises'],['ระดับของแบบฝึก','Exercise level'],['ทุกระดับที่ปลดล็อก','All unlocked levels'],['เลือกคำแปลที่ถูกต้องของประโยค','Choose the correct translation of the sentence'],['เรียงคำให้เป็นประโยค','Put the words in order'],
+   ['↺ ล้าง','↺ Clear'],['✅ ตรวจคำตอบ','✅ Check answer'],['❌ ยังไม่ถูก ลองใหม่','❌ Not quite, try again'],['❌ ยังไม่ถูก ลองอีกครั้ง','❌ Not quite, try again'],['แปลประโยคนี้เป็นภาษาจีน','Translate this sentence into Chinese'],['แก้ประโยคผิดนี้ให้ถูกต้อง','Correct this wrong sentence'],
+   ['✅ ผ่าน! (+15 XP)','✅ Passed! (+15 XP)'],['ประโยคอ้างอิง: ','Reference sentence: '],['❌ ยังไม่ตรง ลองเทียบกับประโยคอ้างอิง:','❌ Not matching yet. Compare with the reference sentence:'],['✅ ถูกต้อง! (+15 XP)','✅ Correct! (+15 XP)'],
    ].sort((a, b) => b[0].length - a[0].length);
   const SKIP = '#vocabMeaning,#vocabExTh,#shadowMeaning,#examBody label,.nt';
   const TH = /[\u0E00-\u0E7F]/, ORIG = new WeakMap(); let lang = ls('hskLang') || 'th';
@@ -1324,8 +1344,7 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
 
   /* กันจอซูมเองตอนแตะช่องพิมพ์ใน Safari (iPhone/iPad) แต่ยังถ่างสองนิ้วซูมได้ */
   const vp = document.querySelector('meta[name=viewport]'), vpBase = vp.getAttribute('content');
-  document.addEventListener('focusin', e => { if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) vp.setAttribute('content', vpBase + ', maximum-scale=1'); });
-  document.addEventListener('focusout', () => { setTimeout(() => vp.setAttribute('content', vpBase), 300); });
+  if (/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) vp.setAttribute('content', vpBase + ', maximum-scale=1');
 
   /* รีเซ็ต: ล้างประวัติไวยากรณ์ด้วย */
   window.resetProgress = function () {
@@ -1542,7 +1561,8 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
       l.appendChild(el('span', 'lz', w.h)); l.appendChild(el('span', 'lp', w.p));
       const sp = el('button', 'lsp', '🔊'); sp.setAttribute('aria-label', 'listen');
       sp.onclick = e => { e.stopPropagation(); speakText(w.h); };
-      top.appendChild(l); top.appendChild(el('div', 'lm', w.m)); top.appendChild(sp);
+      const sl = el('button', 'lsp', '🐢'); sl.onclick = e => { e.stopPropagation(); speakSlow(w.h); };
+      top.appendChild(l); top.appendChild(el('div', 'lm', w.m)); top.appendChild(sp); top.appendChild(sl);
       const ex = el('div', 'lex'); ex.appendChild(el('div', 'lez', w.exZh || '')); ex.appendChild(el('div', 'lep', w.exPy || '')); ex.appendChild(el('div', 'let', w.exTh || ''));
       row.appendChild(top); row.appendChild(ex); row.onclick = () => row.classList.toggle('open'); box.appendChild(row);
     });
@@ -1610,5 +1630,153 @@ html{min-height:100%}body{min-height:100vh;min-height:100dvh}
   window.setLang(document.documentElement.lang);
 })();
 </script>
+<script>
+/* ===== คำแปลประโยคตัวอย่าง HSK 3 เป็นอังกฤษ ===== */
+(function () {
+  const m = {}; [["简单", "This question is very easy."], ["照顾", "I will take good care of myself."], ["参加", "I want to take part in this competition."], ["突然", "He suddenly laughed."], ["经验", "He is very experienced."], ["满意", "I'm very satisfied with this place."], ["习惯", "I'm used to drinking tea."], ["阿姨", "The dishes auntie cooks are delicious."], ["啊", "You came too!"], ["矮", "My younger brother is shorter than me."], ["爱好", "What hobbies do you have?"], ["安静", "It's very quiet in the library."], ["把", "Please close the door."], ["班", "There are twenty students in our class."], ["搬", "We are moving house next month."], ["办法", "I have a good idea."], ["办公室", "The manager is in the office."], ["包", "My bag is on the chair."], ["饱", "I'm full."], ["被", "My phone was taken by a friend."], ["比赛", "There is a football match tomorrow."], ["笔记本", "I bought a new notebook."], ["边", "There is a chair to the left of the table."], ["变化", "There have been big changes here."], ["别人", "Everyone else has left."], ["冰箱", "The milk is in the fridge."], ["不但", "He can not only speak Chinese but also write it."], ["菜单", "Please show me the menu."], ["草", "There is a dog on the grass."], ["层", "I live on the fifth floor."], ["差", "It's five minutes to eight now."], ["超市", "I'm going to the supermarket to buy fruit."], ["衬衫", "He is wearing a white shirt."], ["成绩", "His grades are very good."], ["城市", "Beijing is a big city."], ["迟到", "Sorry, I'm late."], ["除了", "Everyone is going except him."], ["船", "We go there by boat."], ["春", "The weather is lovely in spring."], ["词典", "I use a dictionary to learn Chinese."], ["聪明", "This child is very smart."], ["打扫", "On weekends I clean the house."], ["打算", "Where do you plan to go?"], ["带", "Please bring your book."], ["担心", "Don't worry, no problem."], ["蛋糕", "The birthday cake is delicious."], ["当然", "Of course you can."], ["地方", "This place is very beautiful."], ["地铁", "I take the subway to work."], ["地图", "I'm looking at the map."], ["电梯", "We take the elevator up."], ["电子邮件", "I sent him an email."], ["东", "The sun rises in the east."], ["冬", "Winters in Beijing are very cold."], ["动物", "I like small animals."], ["段", "I have studied Chinese for a while."], ["锻炼", "Exercising every day is good for your health."], ["多么", "How beautiful it is here!"], ["饿", "I'm hungry."], ["耳朵", "His ears are very big."], ["发", "Please send it to me."], ["发烧", "He has a fever and is resting at home."], ["发现", "I found that he is not at home."], ["方便", "It's very convenient to take the subway here."], ["放", "Please put the book on the table."], ["放心", "Don't worry."], ["分", "He scored ninety points on the exam."], ["附近", "Is there a supermarket nearby?"], ["复习", "You need to review well before the exam."], ["干净", "The room is very clean."], ["敢", "I don't dare to go alone."], ["感冒", "I have a cold."], ["刚才", "He was still here just now."], ["根据", "According to the map, we went the wrong way."], ["更", "It's even colder today than yesterday."], ["公园", "Let's go play in the park."], ["故事", "Mom tells me stories."], ["刮风", "It's very windy today."], ["关", "Please close the door."], ["关系", "Our relationship is very good."], ["关心", "Thank you for caring."], ["国家", "China is a big country."], ["果汁", "I'd like a glass of juice."], ["过去", "He used to live in Beijing."], ["害怕", "I'm afraid of being home alone."], ["河", "There are many fish in the river."], ["黑板", "The teacher is writing on the blackboard."], ["护照", "My passport is in my bag."], ["花", "She likes flowers."], ["画", "He is drawing a picture."], ["坏", "My phone is broken."], ["环境", "The environment here is very good."], ["换", "I want to change my clothes."], ["黄", "She has a yellow shirt."], ["会议", "There is a meeting this afternoon."], ["或者", "I can drink either tea or coffee."], ["几乎", "I go almost every day."], ["机会", "This is a good opportunity."], ["极", "It's extremely hot today."], ["记得", "I remember your name."], ["季节", "Which season do you like?"], ["检查", "The doctor is examining the body."], ["见面", "Let's meet tomorrow."], ["健康", "I wish you good health."], ["讲", "Please speak a bit slower."]].forEach(a => { m[a[0]] = a[1]; });
+  const miss = []; vocab[3].forEach(w => { if (m[w.h]) w.exEn = m[w.h]; else miss.push(w.h); }); window.__ex3miss = miss;
+  window.setLang(document.documentElement.lang);
+})();
+</script>
+<script>
+/* ===== รอบนี้: แบบฝึกไวยากรณ์หลายแบบ, เสียงอ่านปรับได้, ซ่อนเมนูล่างตอนพิมพ์ ===== */
+(function () {
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const root = document.documentElement, en = () => root.lang === 'en';
+  const strip = s => s.replace(/[，。？！、,.?!\s]/g, '');
+  const isDone = w => (app.learned[w.lv] || []).includes(w.h);
+  const real = t => RULES.filter(r => r[2] > 1 && r[0].test(t));
+
+  /* ---------- เสียงอ่าน ---------- */
+  let tts = {}; try { tts = JSON.parse(localStorage.getItem('hskTts') || '{}'); } catch (e) {}
+  tts.rate = tts.rate || 'n';
+  const RATE = { s: .55, n: .75, f: .95 };
+  const zhVoices = () => (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /^zh/i.test(v.lang) || /chinese|中文|mandarin/i.test(v.name));
+  const score = v => (/enhanced|premium|natural|neural/i.test(v.name) ? 5 : 0) + (/ting|mei-?jia|lili|yu-?shu|google/i.test(v.name) ? 2 : 0) + (/zh[-_]CN/i.test(v.lang) ? 3 : 0) + (v.localService ? 0 : 1);
+  const best = () => zhVoices().sort((a, b) => score(b) - score(a))[0];
+  window.speakText = function (text, slow) {
+    if (!/[\u4e00-\u9fff]/.test(text)) return;
+    if (!('speechSynthesis' in window)) return alert('เบราว์เซอร์ไม่รองรับระบบเสียง');
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text), v = zhVoices().find(x => x.voiceURI === tts.voice) || best();
+    u.lang = 'zh-CN'; if (v) { u.voice = v; u.lang = v.lang; }
+    u.rate = RATE[tts.rate] * (slow ? .6 : 1); u.pitch = 1;
+    setTimeout(() => speechSynthesis.speak(u), 90);
+  };
+  window.speakSlow = t => speakText(t, true);
+  const saveTts = () => { try { localStorage.setItem('hskTts', JSON.stringify(tts)); } catch (e) {} };
+  function fillVoices() {
+    const sel = $('ttsVoice'), vs = zhVoices(); sel.textContent = '';
+    const o0 = document.createElement('option'); o0.value = ''; o0.textContent = vs.length ? 'อัตโนมัติ (เสียงที่ดีที่สุด)' : 'ไม่พบเสียงภาษาจีนในเครื่อง'; sel.appendChild(o0);
+    vs.forEach(v => { const o = document.createElement('option'); o.value = v.voiceURI; o.textContent = v.name + ' (' + v.lang + ')'; sel.appendChild(o); });
+    sel.value = tts.voice || '';
+  }
+  document.querySelectorAll('#ttsRate button').forEach(b => { b.classList.toggle('on', b.dataset.r === tts.rate); b.onclick = () => { tts.rate = b.dataset.r; saveTts(); document.querySelectorAll('#ttsRate button').forEach(x => x.classList.toggle('on', x === b)); speakText('你好，欢迎学习汉语。'); }; });
+  $('ttsVoice').onchange = e => { tts.voice = e.target.value; saveTts(); speakText('你好，欢迎学习汉语。'); };
+  if (window.speechSynthesis) { fillVoices(); speechSynthesis.onvoiceschanged = fillVoices; }
+
+  /* ---------- ซ่อนเมนูล่างตอนคีย์บอร์ดเปิด ---------- */
+  const ed = el => el && /INPUT|TEXTAREA|SELECT/.test(el.tagName);
+  document.addEventListener('focusin', e => { if (ed(e.target)) root.classList.add('kb'); });
+  document.addEventListener('focusout', () => setTimeout(() => { if (!ed(document.activeElement)) { root.classList.remove('kb'); window.scrollTo(window.scrollX, window.scrollY); } }, 150));
+  document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.target.blur(); });
+  if (window.visualViewport) visualViewport.addEventListener('resize', () => { if (innerHeight - visualViewport.height > 140) root.classList.add('kb'); else if (!ed(document.activeElement)) root.classList.remove('kb'); });
+
+  /* ---------- แบบฝึก: ตัวช่วยเลือกไม่ซ้ำ ---------- */
+  const lvl = () => +$('exLv').value;
+  const pool = () => { const L = lvl(); if (L) return vocab[L].slice(); const a = []; for (let i = 1; i <= app.hskLevel; i++) a.push(...vocab[i]); return a; };
+  const recent = { fill: [], task: [] };
+  const fresh = (list, key, k) => { const r = recent[k]; let c; for (let i = 0; i < 25; i++) { c = pick(list); if (!r.includes(key(c))) break; } r.push(key(c)); if (r.length > 8) r.shift(); return c; };
+  const ALL = new Set(); Object.keys(vocab).forEach(L => vocab[L].forEach(w => ALL.add(w.h)));
+  function seg(sentence) {
+    const t = strip(sentence), out = []; let i = 0, buf = '';
+    const flush = () => { if (buf) { out.push(buf); buf = ''; } };
+    while (i < t.length) {
+      let m = 0; for (let n = Math.min(4, t.length - i); n >= 1; n--) if (ALL.has(t.substr(i, n))) { m = n; break; }
+      if (!m) { buf += t[i]; i++; if (buf.length >= 3) flush(); } else { flush(); out.push(t.substr(i, m)); i += m; }
+    }
+    flush(); return out;
+  }
+
+  /* ---------- เติมคำ / เลือกคำแปล / เรียงคำ ---------- */
+  let fill = null, ord = null;
+  const lbl = s => { $('fillLbl').textContent = s; };
+  window.newFill = function () {
+    const list = pool().filter(w => w.exZh); let t = pick(['cloze', 'tr', 'ord']), w;
+    $('fillFb').textContent = ''; $('ordWrap').style.display = 'none'; $('fillOpts').style.display = 'grid'; $('fillHint').textContent = '';
+    if (t === 'ord') { w = fresh(list, x => x.h, 'fill'); const tk = seg(w.exZh); if (tk.length < 3 || tk.length > 9) t = 'cloze'; else ord = { w, tk, used: [], pool: shuffle(tk.map((s, i) => ({ s, i }))) }; }
+    if (t === 'tr') { w = fresh(list.filter(x => x.exTh), x => x.h, 'fill'); const wrong = shuffle(list.filter(x => x.exTh && x.exTh !== w.exTh)).slice(0, 3).map(x => x.exTh);
+      fill = { t, w, ans: w.exTh, opts: shuffle([w.exTh, ...wrong]), done: false }; lbl('เลือกคำแปลที่ถูกต้องของประโยค'); $('fillQ').textContent = w.exZh; }
+    else if (t === 'ord') { fill = { t, w, done: false }; lbl('เรียงคำให้เป็นประโยค'); $('fillQ').textContent = ''; $('fillHint').textContent = w.exTh; $('fillOpts').style.display = 'none'; $('ordWrap').style.display = 'block'; drawOrd(); }
+    else { const c = list.filter(x => x.exZh.split(x.h).length === 2); w = fresh(c.length ? c : list, x => x.h, 'fill'); const same = vocab[w.lv].filter(x => x.h !== w.h && !w.exZh.includes(x.h));
+      fill = { t: 'cloze', w, ans: w.h, opts: shuffle([w.h, ...shuffle(same).slice(0, 3).map(x => x.h)]), done: false }; lbl('เลือกคำที่เติมลงในช่องว่าง'); $('fillQ').textContent = w.exZh.replace(w.h, '＿＿'); $('fillHint').textContent = w.exTh; }
+    if (fill.opts) { const long = fill.t === 'tr'; $('fillOpts').className = 'opts' + (long ? ' one' : ''); $('fillOpts').textContent = '';
+      fill.opts.forEach((o, i) => { const b = document.createElement('button'); b.className = 'opt' + (long ? ' long' : ''); b.textContent = o; b.onclick = () => pickFill(i); $('fillOpts').appendChild(b); }); }
+  };
+  window.pickFill = function (i) {
+    if (!fill || fill.done) return; fill.done = true; const ok = fill.opts[i] === fill.ans, bs = $('fillOpts').children;
+    for (let k = 0; k < bs.length; k++) if (fill.opts[k] === fill.ans) bs[k].classList.add('ok');
+    if (!ok) bs[i].classList.add('no');
+    $('fillQ').textContent = fill.w.exZh; $('fillHint').textContent = fill.w.exPy + (fill.t === 'tr' ? '' : '  ·  ' + fill.w.exTh);
+    $('fillFb').textContent = ok ? '✅ ถูกต้อง! (+5 XP)' : '❌ คำตอบที่ถูกคือ ' + (fill.t === 'tr' ? '' : fill.w.h + ' (' + fill.w.p + ')'); if (ok) addXP(5);
+  };
+  function drawOrd() {
+    const a = $('ordAns'), p = $('ordPool'); a.textContent = ''; p.textContent = '';
+    ord.used.forEach(x => { const b = document.createElement('button'); b.className = 'tok in'; b.textContent = x.s; b.onclick = () => { ord.used = ord.used.filter(y => y !== x); ord.pool.push(x); drawOrd(); }; a.appendChild(b); });
+    ord.pool.forEach(x => { const b = document.createElement('button'); b.className = 'tok'; b.textContent = x.s; b.onclick = () => { ord.pool = ord.pool.filter(y => y !== x); ord.used.push(x); drawOrd(); }; p.appendChild(b); });
+  }
+  window.ordReset = function () { if (!ord || fill.done) return; ord.pool = shuffle(ord.pool.concat(ord.used)); ord.used = []; $('fillFb').textContent = ''; drawOrd(); };
+  window.ordCheck = function () {
+    if (!ord || fill.done) return; const got = ord.used.map(x => x.s).join(''), want = ord.tk.join('');
+    if (ord.used.length === ord.tk.length && got === want) { fill.done = true; $('fillFb').textContent = '✅ ถูกต้อง! (+5 XP)'; $('fillHint').textContent = fill.w.exZh + '  ·  ' + fill.w.exPy; addXP(5); }
+    else $('fillFb').textContent = '❌ ยังไม่ถูก ลองใหม่';
+  };
+
+  /* ---------- โจทย์ท้าแต่งประโยค: แต่งจากคำ / แปลเป็นจีน / แก้ประโยคผิด ---------- */
+  const FIX = [
+    ['我不有钱。', '我没有钱。', ['没有'], 'ปฏิเสธ 有 ใช้ 没有', 'Negate 有 with 没有'],
+    ['我是很高兴。', '我很高兴。', ['很高兴'], 'ไม่ต้องมี 是 นำหน้าคำคุณศัพท์', 'No 是 before an adjective'],
+    ['我二个朋友。', '我有两个朋友。', ['两个'], 'ก่อนลักษณนามใช้ 两', 'Use 两 before measure words'],
+    ['昨天我不去学校。', '昨天我没去学校。', ['没去'], 'อดีตใช้ 没 ปฏิเสธ', 'Use 没 to negate the past'],
+    ['你有没有钱吗？', '你有没有钱？', ['有没有'], 'ไม่ต้องใช้ 吗 กับ A不A', 'No 吗 with A不A'],
+    ['都我们是学生。', '我们都是学生。', ['我们都'], '都 วางหลังประธาน', '都 goes after the subject'],
+    ['我去商店明天。', '明天我去商店。', ['明天'], 'คำบอกเวลามาก่อนกริยา', 'Time words come before the verb'],
+    ['我吃饭在家。', '我在家吃饭。', ['在家吃'], 'สถานที่ (在 + สถานที่) อยู่ก่อนกริยา', 'Place (在 + location) comes before the verb'],
+    ['我喜欢不喝咖啡。', '我不喜欢喝咖啡。', ['不喜欢'], 'ใส่ 不 หน้า 喜欢', 'Put 不 before 喜欢'],
+    ['这个比那个很好。', '这个比那个好。', ['比那个好'], 'ประโยค 比 ไม่ใช้ 很', 'No 很 in 比 sentences'],
+    ['他会说汉语很好。', '他汉语说得很好。', ['说得很好'], 'ใช้ 得 หลังกริยาเพื่อบอกระดับ', 'Use 得 after the verb for degree']
+  ];
+  let task = null;
+  const tl = s => { $('taskLbl').textContent = s; };
+  window.newTask = function () {
+    const t = pick(['word', 'tr', 'fix']); $('taskIn').value = ''; $('taskFb').textContent = '';
+    const list = pool().filter(w => w.exZh);
+    if (t === 'tr') { const w = fresh(list.filter(x => x.exTh), x => x.h, 'task'); task = { t, w, done: false }; tl('แปลประโยคนี้เป็นภาษาจีน'); $('taskW').textContent = w.exTh; }
+    else if (t === 'fix') { const it = fresh(FIX, x => x[0], 'task'); task = { t, it, done: false }; tl('แก้ประโยคผิดนี้ให้ถูกต้อง'); $('taskW').textContent = it[0]; }
+    else { const l = list.filter(isDone), w = fresh(l.length ? l : list, x => x.h, 'task'); task = { t: 'word', w, done: false }; tl('แต่งประโยคโดยใช้คำว่า'); $('taskW').textContent = w.h + ' (' + w.p + ') = ' + w.m; }
+  };
+  window.checkTask = function () {
+    const t = $('taskIn').value.trim(), fb = $('taskFb'), u = strip(t); if (!t) return alert('กรุณากรอกประโยคภาษาจีน');
+    const bad = real(t), win = xp => { if (!task.done) { task.done = true; addXP(xp); } };
+    const note = bad.map(r => '• ' + r[1]).join('\n');
+    if (task.t === 'word') {
+      if (!t.includes(task.w.h)) { fb.textContent = '❌ ประโยคต้องมีคำว่า ' + task.w.h; return; }
+      if (bad.length || u.length < 3) { fb.textContent = '⚠️ ประโยคมีคำนี้แล้ว แต่ยังมีจุดที่ควรแก้:\n' + (note || '• ประโยคสั้นเกินไป'); return; }
+      fb.textContent = '✅ ผ่าน! ประโยคใช้คำนี้ถูกต้อง (+15 XP)'; win(15);
+    } else if (task.t === 'tr') {
+      const ref = strip(task.w.exZh), set = new Set(ref); let hit = 0; set.forEach(c => { if (u.includes(c)) hit++; });
+      if (u === ref || (u.includes(task.w.h) && hit / set.size >= .75 && !bad.length)) { fb.textContent = '✅ ผ่าน! (+15 XP)\nประโยคอ้างอิง: ' + task.w.exZh; win(15); }
+      else fb.textContent = '❌ ยังไม่ตรง ลองเทียบกับประโยคอ้างอิง:\n' + task.w.exZh + ' (' + task.w.exPy + ')' + (note ? '\n' + note : '');
+    } else {
+      const it = task.it, nt = en() ? it[4] : it[3];
+      if (u === strip(it[1]) || (it[2].every(m => u.includes(m)) && !bad.length && u.length >= 3)) { fb.textContent = '✅ ถูกต้อง! (+15 XP)\n' + it[1] + '\n' + nt; win(15); }
+      else fb.textContent = '❌ ยังไม่ถูก ลองอีกครั้ง' + (note ? '\n' + note : '');
+    }
+  };
+  $('exLv').onchange = () => { recent.fill = []; recent.task = []; newFill(); newTask(); };
+  newFill(); newTask();
+})();
+</script>
+
 </body>
 </html>
